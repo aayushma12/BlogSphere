@@ -1,25 +1,28 @@
 package com.example.blogapp
 
+import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
+import com.example.blogapp.databinding.ActivityMainBinding
+import com.google.firebase.database.collection.LLRBNode.Color
+
 
 class MainActivity : AppCompatActivity() {
+    private val binding : ActivityMainBinding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
 
-        // Enable edge-to-edge display
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        binding.floatingAddArticleButton.setOnClickListener {
+            startActivity(Intent(this,AddArticleActivity::class.java))
         }
+
+
+
     }
 
 }

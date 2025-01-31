@@ -2,7 +2,6 @@ package com.example.blogapp
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -65,6 +64,7 @@ class SignInAndRegistrationActivity : AppCompatActivity() {
                             if (task.isSuccessful){
                                 Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
                                 startActivity(Intent(this,MainActivity::class.java))
+                                finish()
                             }else{
                                 Toast.makeText(this, "Login Failed, Please Enter correct Details", Toast.LENGTH_SHORT).show()
                             }
@@ -89,6 +89,7 @@ class SignInAndRegistrationActivity : AppCompatActivity() {
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 val user = auth.currentUser
+                                auth.signOut()
                                 user?.let {
                                     val userReference = database.getReference("users")
                                     val userId = user.uid
@@ -109,6 +110,7 @@ class SignInAndRegistrationActivity : AppCompatActivity() {
                                     storageReference.putFile(imageUri!!)
                                     Toast.makeText(this, "User Register Success", Toast.LENGTH_SHORT).show()
                                     startActivity(Intent(this,WelcomeActivity::class.java))
+                                    finish()
                                 }
                             } else {
                                 Toast.makeText(this, "User Registration Failed", Toast.LENGTH_SHORT).show()
