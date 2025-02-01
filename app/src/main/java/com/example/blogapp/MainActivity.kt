@@ -57,7 +57,8 @@ class MainActivity : AppCompatActivity() {
                         blogItems.add(blogItem)
                     }
                 }
-
+                // reverse the list
+                blogItems.reverse()
 
 
                 //Notify the adapter that the data has changed
