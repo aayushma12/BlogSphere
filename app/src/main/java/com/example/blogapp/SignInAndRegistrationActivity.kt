@@ -3,6 +3,7 @@ package com.example.blogapp
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -114,17 +115,22 @@ class SignInAndRegistrationActivity : AppCompatActivity() {
                                         storage.reference.child("profile_image/$userId.jpg")
                                     storageReference.putFile(imageUri!!)
                                         .addOnCompleteListener { task ->
-                                            storageReference.downloadUrl.addOnCompleteListener { imageUri ->
-                                                val imageUrl = imageUri.toString()
+                                            if (task.isSuccessful){
+                                                storageReference.downloadUrl.addOnCompleteListener { imageUri ->
+                                                    if (imageUri.isSuccessful){
+                                                        val imageUrl=imageUri.result.toString()
 
-                                                //save the image url to the realtime database
-                                                userReference.child(userId).child("profileImage")
-                                                    .setValue(imageUrl)
-                                                Glide.with(this)
-                                                    .load(imageUri)
-                                                    .apply(RequestOptions.circleCropTransform())
-                                                    .into(binding.registerUserImage)
+
+                                                        //save the image url to the realtime database
+                                                        userReference.child(userId).child("profileImage")
+                                                            .setValue(imageUrl)
+
+                                                    }
+
+                                                }
+
                                             }
+
                                         }
                                     Toast.makeText(
                                         this,
