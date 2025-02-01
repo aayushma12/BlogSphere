@@ -85,4 +85,31 @@
         app:layout_constraintEnd_toEndOf="@+id/textView16"
         app:layout_constraintStart_toStartOf="@+id/cardView4"
         app:layout_constraintTop_toBottomOf="@+id/cardView4" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@color/black"
+        android:layout_marginBottom="16dp"
+        app:shapeAppearanceOverlay="@style/round"
+        app:tint="@color/white"
+        android:clickable="true"
+        app:layout_constraintBottom_toTopOf="@+id/floatingActionButton2"
+        app:layout_constraintEnd_toEndOf="@+id/floatingActionButton2"
+        app:srcCompat="@drawable/white_heart" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:tint="@color/red"
+        app:shapeAppearanceOverlay="@style/round"
+        app:backgroundTint="@color/black"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/minus_bookmark" />
 </androidx.constraintlayout.widget.ConstraintLayout>
