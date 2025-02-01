@@ -1,12 +1,12 @@
 package com.example.blogapp.Model
 
-import android.net.Uri
+
 
 data class BlogItemModel(
-    val heading: String,
-    val userName: String,
-    val date: String,
-    val post: String,
-    val likeCount: Int,
-    val imageUri: String
+    val heading: String="null",
+    val userName: String="null",
+    val date: String="null",
+    val post: String="null",
+    val likeCount: Int=0,
+    val profileImage: String="null"
 )
