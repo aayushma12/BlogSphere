@@ -1,4 +1,5 @@
 package com.example.blogapp
+
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -56,17 +57,21 @@ class SignInAndRegistrationActivity : AppCompatActivity() {
             binding.loginButton.setOnClickListener {
                 val loginEmail = binding.loginEmailAddress.text.toString()
                 val loginPassword = binding.loginPassword.text.toString()
-                if (loginEmail.isEmpty()|| loginPassword.isEmpty()){
+                if (loginEmail.isEmpty() || loginPassword.isEmpty()) {
                     Toast.makeText(this, "Please Fill All The Details", Toast.LENGTH_SHORT).show()
-                }else{
+                } else {
                     auth.signInWithEmailAndPassword(loginEmail, loginPassword)
                         .addOnCompleteListener { task ->
-                            if (task.isSuccessful){
+                            if (task.isSuccessful) {
                                 Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
-                                startActivity(Intent(this,MainActivity::class.java))
+                                startActivity(Intent(this, MainActivity::class.java))
                                 finish()
-                            }else{
-                                Toast.makeText(this, "Login Failed, Please Enter correct Details", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(
+                                    this,
+                                    "Login Failed, Please Enter correct Details",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                 }
@@ -108,12 +113,30 @@ class SignInAndRegistrationActivity : AppCompatActivity() {
                                     val storageReference: StorageReference =
                                         storage.reference.child("profile_image/$userId.jpg")
                                     storageReference.putFile(imageUri!!)
-                                    Toast.makeText(this, "User Register Success", Toast.LENGTH_SHORT).show()
-                                    startActivity(Intent(this,WelcomeActivity::class.java))
+                                        .addOnCompleteListener { task ->
+                                            storageReference.downloadUrl.addOnCompleteListener { imageUri ->
+                                                val imageUrl = imageUri.toString()
+
+                                                //save the image url to the realtime database
+                                                userReference.child(userId).child("profileImage")
+                                                    .setValue(imageUrl)
+                                                Glide.with(this)
+                                                    .load(imageUri)
+                                                    .apply(RequestOptions.circleCropTransform())
+                                                    .into(binding.registerUserImage)
+                                            }
+                                        }
+                                    Toast.makeText(
+                                        this,
+                                        "User Register Success",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    startActivity(Intent(this, WelcomeActivity::class.java))
                                     finish()
                                 }
                             } else {
-                                Toast.makeText(this, "User Registration Failed", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, "User Registration Failed", Toast.LENGTH_SHORT)
+                                    .show()
 
                             }
                         }
@@ -139,11 +162,11 @@ class SignInAndRegistrationActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data!= null && data.data != null)
-            imageUri=data.data
-            Glide.with(this)
-                .load(imageUri)
-                .apply(RequestOptions.circleCropTransform())
-                .into(binding.registerUserImage)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.data != null)
+            imageUri = data.data
+        Glide.with(this)
+            .load(imageUri)
+            .apply(RequestOptions.circleCropTransform())
+            .into(binding.registerUserImage)
     }
 }
