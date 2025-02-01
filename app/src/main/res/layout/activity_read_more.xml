@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".ReadMoreActivity">
 
+    <!-- Back Button -->
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="24dp"
@@ -18,6 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/back" />
 
+    <!-- Title Text -->
     <TextView
         android:id="@+id/titleText"
         android:layout_width="0dp"
@@ -25,20 +27,21 @@
         android:layout_marginTop="31dp"
         android:layout_marginEnd="32dp"
         android:fontFamily="sans-serif-black"
-        android:text="TextView"
+        android:text="Title"
         android:textColor="@color/blue"
         android:textSize="21sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/backButton"
+        app:layout_constraintStart_toEndOf="@+id/backButton"
         app:layout_constraintTop_toBottomOf="@+id/backButton" />
 
+    <!-- Profile Image (Inside CardView for rounded corners) -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView4"
         android:layout_width="35dp"
-        android:layout_height="wrap_content"
+        android:layout_height="35dp"
         android:layout_marginTop="19dp"
         app:cardCornerRadius="100dp"
-        app:layout_constraintStart_toStartOf="@+id/titleText"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleText">
 
         <ImageView
@@ -49,45 +52,36 @@
             app:srcCompat="@drawable/profile1" />
     </androidx.cardview.widget.CardView>
 
+    <!-- User Name -->
     <TextView
         android:id="@+id/userName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:fontFamily="serif"
-        android:text="TextView"
+        android:text="User Name"
         android:textColor="@color/black"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/cardView4"
         app:layout_constraintStart_toEndOf="@+id/cardView4"
         app:layout_constraintTop_toTopOf="@+id/cardView4" />
 
+    <!-- Date -->
+
+    <!-- Divider Line -->
     <TextView
         android:id="@+id/dateReadMore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/alata"
-        android:text="TextView"
+        android:layout_marginEnd="36dp"
+        android:fontFamily="sans-serif"
+        android:text="Date"
         android:textColor="@color/date_color"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/userName"
-        app:layout_constraintEnd_toEndOf="@+id/titleText"
-        app:layout_constraintTop_toTopOf="@+id/userName" />
-
-    <TextView
-        android:id="@+id/blogDescriptionTextView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="24dp"
-        android:fontFamily="serif"
-        android:text="TextView"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        android:padding="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/divider2"
-        app:layout_constraintStart_toStartOf="@+id/divider2"
-        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/userName"
+        app:layout_constraintVertical_bias="1.0" />
 
     <View
         android:id="@+id/divider2"
@@ -95,34 +89,54 @@
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
         android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="@+id/dateReadMore"
-        app:layout_constraintStart_toStartOf="@+id/cardView4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView4" />
 
+    <!-- ScrollView (Contains Blog Description) -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider2">
+
+        <TextView
+            android:id="@+id/blogDescriptionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="serif"
+            android:padding="10dp"
+            android:text="Blog description goes here..."
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+    </ScrollView>
+
+    <!-- Floating Action Button (Like) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:backgroundTint="@color/black"
         android:layout_marginBottom="16dp"
-        app:shapeAppearanceOverlay="@style/round"
-        app:tint="@color/white"
         android:clickable="true"
+        app:backgroundTint="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/floatingActionButton2"
-        app:layout_constraintEnd_toEndOf="@+id/floatingActionButton2"
-        app:srcCompat="@drawable/white_heart" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/white_heart"
+        app:tint="@color/white" />
 
+    <!-- Floating Action Button (Bookmark) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:tint="@color/red"
-        app:shapeAppearanceOverlay="@style/round"
-        app:backgroundTint="@color/black"
-        android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
         android:clickable="true"
+        app:backgroundTint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/minus_bookmark" />
+        app:srcCompat="@drawable/minus_bookmark"
+        app:tint="@color/red" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
