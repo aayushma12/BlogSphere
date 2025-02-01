@@ -1,20 +1,31 @@
 package com.example.blogapp
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.example.blogapp.Model.BlogItemModel
+import com.example.blogapp.databinding.ActivityReadMoreBinding
 
 class ReadMoreActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityReadMoreBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_read_more)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        binding= ActivityReadMoreBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        val blogs = intent.getParcelableExtra<BlogItemModel>("blogItem")
+
+        if(blogs != null){
+
+            // Retrive user related data here e.x blog title etc.
+            binding.titleText.text = blogs.heading
+            binding.userName.text= blogs.userName
+            binding.dateReadMore.text= blogs.date
+            binding.blogDescriptionTextView.text= blogs.post
         }
+        else{
+            Toast.makeText(this@ReadMoreActivity, "Failed to load blogs", Toast.LENGTH_SHORT).show()
+        }
+
     }
 }
