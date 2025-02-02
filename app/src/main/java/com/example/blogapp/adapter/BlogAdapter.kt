@@ -1,6 +1,7 @@
 package com.example.blogapp.adapter
 
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
@@ -82,7 +83,7 @@ class BlogAdapter( private val items:List<BlogItemModel>): RecyclerView.Adapter<
             }
             binding.likeButton.setOnClickListener {
                 if (currentUser != null) {
-                    handelLikeButtonClicked(postId, blogItemModel)
+                    handelLikeButtonClicked(postId, blogItemModel,binding)
                 } else {
                     Toast.makeText(context, "You have to login first", Toast.LENGTH_SHORT).show()
                 }
@@ -90,9 +91,9 @@ class BlogAdapter( private val items:List<BlogItemModel>): RecyclerView.Adapter<
 
         }
 
-        private fun handelLikeButtonClicked(postId: String, blogItemModel: BlogItemModel) {
+        private fun handelLikeButtonClicked(postId: String, blogItemModel: BlogItemModel ,binding: BlogItemBinding) {
 
-            val userReference = databaseReference.child("user").child(currentUser!!.uid)
+            val userReference = databaseReference.child("users").child(currentUser!!.uid)
             val postLikeReference = databaseReference.child("blogs").child(postId).child("likes")
 
             //check user has already liked the post, so unlike it
@@ -104,8 +105,36 @@ class BlogAdapter( private val items:List<BlogItemModel>): RecyclerView.Adapter<
                             userReference.child("likes").child(postId).removeValue()
                                 .addOnSuccessListener {
                                     postLikeReference.child(currentUser.uid).removeValue()
-                                    blogItemModel.likedBy.remove(currentUser.uid)
-                                    updateLikeButtonImage(false)
+                                    blogItemModel.likedBy?.remove(currentUser.uid)
+                                    updateLikeButtonImage(binding, false)
+
+                                    //decrement the like in database
+                                    val newLikeCount = blogItemModel.likeCount-1
+                                    blogItemModel.likeCount=newLikeCount
+                                    databaseReference.child("blogs").child(postId).child("likeCount").setValue(newLikeCount)
+                                    notifyDataSetChanged()
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.e("LikedClicked","onCreate: Failed to unlike the blog$e", )
+                                }
+
+                        }
+                        else{
+                            //User has not liked the post, so like it
+                            userReference.child("likes").child(postId).setValue(true)
+                                .addOnSuccessListener {
+                                    postLikeReference.child(currentUser.uid).setValue(true)
+                                    blogItemModel.likedBy?.add(currentUser.uid)
+                                    updateLikeButtonImage(binding, true)
+
+                                    //Increment the like count in the database
+                                    val newLikeCount=blogItemModel.likeCount +1
+                                    blogItemModel.likeCount=newLikeCount
+                                    databaseReference.child("blogs").child(postId).child("likeCount").setValue(newLikeCount)
+                                    notifyDataSetChanged()
+                                }
+                                .addOnFailureListener {e ->
+                                    Log.e("LikedClicked","onCreate: Failed to like the blog$e", )
                                 }
                         }
                     }
