@@ -92,16 +92,15 @@ class BlogAdapter(private val items: List<BlogItemModel>) :
             }
 
             //set the initial icon based on the saved status
-            val  userReference=databaseReference.child("users").child(currentUser?.uid ?:"")
+            val userReference = databaseReference.child("users").child(currentUser?.uid ?: "")
             val postSaveReference = userReference.child("saveBlogPosts").child(postId)
-            postSaveReference.addListenerForSingleValueEvent(object :ValueEventListener{
+            postSaveReference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    if(snapshot.exists()){
+                    if (snapshot.exists()) {
                         // if blog already saved
                         binding.postsaveButton.setImageResource(R.drawable.save_articles_fill_red)
 
-                    }else
-                    {
+                    } else {
                         //if blog not saved yet
                         binding.postsaveButton.setImageResource(R.drawable.minus_bookmark)
                     }
@@ -109,7 +108,7 @@ class BlogAdapter(private val items: List<BlogItemModel>) :
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
+
                 }
             })
             //Handle Save button clicks
@@ -201,55 +200,63 @@ class BlogAdapter(private val items: List<BlogItemModel>) :
         binding: BlogItemBinding
     ) {
         val userReference = databaseReference.child("users").child(currentUser!!.uid)
-        userReference.child("saveBlogPosts").child(postId).addListenerForSingleValueEvent(object :ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()){
-                    // the blog is currently saved, so unsaved it
-                    userReference.child("saveBlogPosts").child(postId).removeValue()
-                        .addOnSuccessListener {
-                            //update the ui
+        userReference.child("saveBlogPosts").child(postId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        // the blog is currently saved, so unsaved it
+                        userReference.child("saveBlogPosts").child(postId).removeValue()
+                            .addOnSuccessListener {
+                                //update the ui
 
-                            val clickedBlogItem = items.find { it.postId==postId }
-                            clickedBlogItem?.isSaved=false
-                            notifyDataSetChanged()
+                                val clickedBlogItem = items.find { it.postId == postId }
+                                clickedBlogItem?.isSaved = false
+                                notifyDataSetChanged()
 
-                            val context=binding.root.context
-                            Toast.makeText(context, "Blog Unsaved!", Toast.LENGTH_SHORT).show()
-                        }.addOnFailureListener {
-                            val context=binding.root.context
-                            Toast.makeText(context, "Failed to  unSave the blog", Toast.LENGTH_SHORT).show()
-                        }
-                    binding.postsaveButton.setImageResource(R.drawable.save_articles_fill_red)
+                                val context = binding.root.context
+                                Toast.makeText(context, "Blog Unsaved!", Toast.LENGTH_SHORT).show()
+                            }.addOnFailureListener {
+                                val context = binding.root.context
+                                Toast.makeText(
+                                    context,
+                                    "Failed to  unSave the blog",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        binding.postsaveButton.setImageResource(R.drawable.save_articles_fill_red)
 
-                }else
-                {
-                    // the blog is not saved so save it
+                    } else {
+                        // the blog is not saved so save it
 
-                    userReference.child("saveBlogPosts").child(postId).setValue(true)
-                        .addOnSuccessListener {
-                            //update ui
+                        userReference.child("saveBlogPosts").child(postId).setValue(true)
+                            .addOnSuccessListener {
+                                //update ui
 
-                            val clickedBlogItem=items.find { it.postId==postId }
-                            clickedBlogItem?.isSaved=true
-                            notifyDataSetChanged()
+                                val clickedBlogItem = items.find { it.postId == postId }
+                                clickedBlogItem?.isSaved = true
+                                notifyDataSetChanged()
 
-                            val context=binding.root.context
-                            Toast.makeText(context, "Blog Saved!", Toast.LENGTH_SHORT).show()
-                        }
-                        .addOnFailureListener {
-                            val context=binding.root.context
-                            Toast.makeText(context, "Failed to  save the blog", Toast.LENGTH_SHORT).show()
-                        }
-                    // change the save button icon
-                    binding.postsaveButton.setImageResource(R.drawable.minus_bookmark)
+                                val context = binding.root.context
+                                Toast.makeText(context, "Blog Saved!", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener {
+                                val context = binding.root.context
+                                Toast.makeText(
+                                    context,
+                                    "Failed to  save the blog",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        // change the save button icon
+                        binding.postsaveButton.setImageResource(R.drawable.minus_bookmark)
+                    }
+
                 }
 
-            }
+                override fun onCancelled(error: DatabaseError) {
 
-            override fun onCancelled(error: DatabaseError) {
-
-            }
-        })
+                }
+            })
 
     }
 
