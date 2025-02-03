@@ -18,7 +18,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class BlogAdapter(private val items: List<BlogItemModel>) :
+class BlogAdapter(private val items: MutableList<BlogItemModel>) :
     RecyclerView.Adapter<BlogAdapter.BlogViewHolder>() {
 
     private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference
@@ -258,6 +258,12 @@ class BlogAdapter(private val items: List<BlogItemModel>) :
                 }
             })
 
+    }
+
+    fun updateData(savedBlogArticles: List<BlogItemModel>) {
+        items.clear()
+        items.addAll(savedBlogArticles)
+        notifyDataSetChanged()
     }
 
 }

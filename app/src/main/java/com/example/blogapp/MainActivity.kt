@@ -29,6 +29,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        // to go save article page
+        binding.saveArticleButton.setOnClickListener {
+            startActivity(Intent(this,SavedArticlesActivity::class.java))
+        }
+
         auth = FirebaseAuth.getInstance()
         databaseReference=FirebaseDatabase.getInstance().reference.child("blogs")
 
