@@ -28,10 +28,16 @@ class ProfileActivity : AppCompatActivity() {
 
         // to go add article page
         binding.addNewBlogButton.setOnClickListener {
-            startActivity(Intent(this,SavedArticlesActivity::class.java))
+            startActivity(Intent(this,AddArticleActivity::class.java))
         }
+
+        //to go to your article activity
+        binding.articlesButton.setOnClickListener {
+            startActivity(Intent(this, ArticleActivity::class.java))
+        }
+
+
         //to logout
-        // to go save article page
         binding.logoutButton.setOnClickListener {
             auth.signOut()
 
