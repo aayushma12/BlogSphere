@@ -1,3 +1,4 @@
+
 package com.example.blogapp
 
 import android.os.Bundle
@@ -31,7 +32,7 @@ class EditBlogActivity : AppCompatActivity() {
         binding.saveBlogButton.setOnClickListener {
             val updatedTitle= binding.BlogTitle.editText?.text.toString().trim()
             val updateDescription = binding.BlogDescription.editText?.text.toString().trim()
-            
+
             if(updatedTitle.isEmpty() || updateDescription.isEmpty()){
                 Toast.makeText(this, "Please Fill All The Details", Toast.LENGTH_SHORT).show()
             }else{
@@ -46,7 +47,7 @@ class EditBlogActivity : AppCompatActivity() {
     }
 
     private fun updatedDataInFirebase(blogItemModel: BlogItemModel) {
-val databaseReference= FirebaseDatabase.getInstance().getReference("blogs")
+        val databaseReference= FirebaseDatabase.getInstance().getReference("blogs")
         val postId = blogItemModel.postId
         databaseReference.child(postId).setValue(blogItemModel)
             .addOnSuccessListener {
