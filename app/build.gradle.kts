@@ -50,6 +50,8 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
     implementation(libs.firebase.storage)
+    implementation ("com.cloudinary:cloudinary-android:2.0.0")
+
 
     // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.16.0")

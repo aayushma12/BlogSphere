@@ -15,8 +15,10 @@ import com.example.blogapp.databinding.ActivitySignInAndRegistrationBinding
 import com.example.blogapp.register.WelcomeActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
+import java.util.*
 
 class SignInAndRegistrationActivity : AppCompatActivity() {
     private val binding: ActivitySignInAndRegistrationBinding by lazy {
@@ -24,23 +26,32 @@ class SignInAndRegistrationActivity : AppCompatActivity() {
     }
     private lateinit var auth: FirebaseAuth
     private lateinit var database: FirebaseDatabase
-    private lateinit var storage: FirebaseStorage
     private val PICK_IMAGE_REQUEST = 1
     private var imageUri: Uri? = null
+
+    // Cloudinary Configuration
+    private val cloudinaryConfig = mapOf(
+        "cloud_name" to "djsc3vi6q",  // Replace with your Cloudinary cloud name
+        "api_key" to "763563615486535",        // Replace with your Cloudinary API key
+        "api_secret" to "x5ogs5QtikGGgxj9HR6Pb4sWIzs"   // Replace with your Cloudinary API secret
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(binding.root)
 
-        //Initialize Firebase Authentication
+        // Initialize Firebase Authentication and Database
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
-        storage = FirebaseStorage.getInstance()
 
-        //for visibility of fields
+        // Initialize Cloudinary
+        MediaManager.init(this, cloudinaryConfig)
+
+        // For visibility of fields
         val action = intent.getStringExtra("action")
-        //adjust visibility for login
+
+        // Adjust visibility for login
         if (action == "login") {
             binding.loginEmailAddress.visibility = View.VISIBLE
             binding.loginPassword.visibility = View.VISIBLE
@@ -68,11 +79,7 @@ class SignInAndRegistrationActivity : AppCompatActivity() {
                                 startActivity(Intent(this, MainActivity::class.java))
                                 finish()
                             } else {
-                                Toast.makeText(
-                                    this,
-                                    "Login Failed, Please Enter correct Details",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                Toast.makeText(this, "Login Failed, Please Enter correct Details", Toast.LENGTH_SHORT).show()
                             }
                         }
                 }
@@ -83,7 +90,7 @@ class SignInAndRegistrationActivity : AppCompatActivity() {
             binding.loginButton.alpha = 0.5f
 
             binding.registerButton.setOnClickListener {
-                //Get data from edit text field
+                // Get data from edit text fields
                 val registerName = binding.registerName.text.toString()
                 val registerEmail = binding.registerEmail.text.toString()
                 val registerPassword = binding.registerPassword.text.toString()
@@ -104,72 +111,77 @@ class SignInAndRegistrationActivity : AppCompatActivity() {
                                         registerEmail
                                     )
                                     userReference.child(userId).setValue(userData)
-//                                        .addOnSuccessListener {
-//                                            Log.d("TAG","onCreate: data saved")
-//                                        }
-//                                        .addOnFailureListener { e ->
-//                                            Log.e("TAG","onCreate: Error saving data ${e.message}")
-//                                        }
-                                    //upload image to firebase storage
-                                    val storageReference: StorageReference =
-                                        storage.reference.child("profile_image/$userId.jpg")
-                                    storageReference.putFile(imageUri!!)
-                                        .addOnCompleteListener { task ->
-                                            if (task.isSuccessful){
-                                                storageReference.downloadUrl.addOnCompleteListener { imageUri ->
-                                                    if (imageUri.isSuccessful){
-                                                        val imageUrl=imageUri.result.toString()
 
+                                    // Upload image to Cloudinary
+                                    if (imageUri != null) {
+                                        val options = HashMap<String, Any>()
+                                        options["public_id"] = "profile_image/$userId.jpg"
 
-                                                        //save the image url to the realtime database
-                                                        userReference.child(userId).child("profileImage")
-                                                            .setValue(imageUrl)
-
-                                                    }
-
+                                        // Upload image to Cloudinary
+                                        MediaManager.get().upload(imageUri!!)
+                                            .options(options)
+                                            .callback(object : UploadCallback {
+                                                override fun onStart(requestId: String?) {
+                                                    // Code when upload starts (optional)
                                                 }
 
-                                            }
+                                                override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
+                                                    // Optionally update progress (optional)
+                                                }
 
-                                        }
-                                    Toast.makeText(
-                                        this,
-                                        "User Register Success",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    startActivity(Intent(this, WelcomeActivity::class.java))
-                                    finish()
+                                                override fun onSuccess(requestId: String?, resultData: Map<*, *>?) {
+                                                    // Success! Get the URL and save to Firebase Realtime Database
+                                                    val imageUrl = resultData?.get("secure_url").toString()
+                                                    userReference.child(userId).child("profileImage").setValue(imageUrl)
+
+                                                    Toast.makeText(this@SignInAndRegistrationActivity, "User Register Success", Toast.LENGTH_SHORT).show()
+                                                    startActivity(Intent(this@SignInAndRegistrationActivity, WelcomeActivity::class.java))
+                                                    finish()
+                                                }
+
+                                                // Correct method signature for onError
+                                                override fun onError(requestId: String?, error: ErrorInfo?) {
+                                                    // Handle error here with the ErrorInfo object
+                                                    error?.let {
+                                                        Toast.makeText(this@SignInAndRegistrationActivity, "Error Uploading Image: ${it.description}", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                }
+
+                                                override fun onReschedule(requestId: String?, error: ErrorInfo?) {
+                                                    // Handle reschedule here (optional)
+                                                    error?.let {
+                                                        Log.d("Cloudinary", "Reschedule requested for $requestId, error: ${it.description}")
+                                                    }
+                                                }
+                                            }).dispatch()
+                                    }
+
                                 }
                             } else {
-                                Toast.makeText(this, "User Registration Failed", Toast.LENGTH_SHORT)
-                                    .show()
-
+                                Toast.makeText(this, "User Registration Failed", Toast.LENGTH_SHORT).show()
                             }
                         }
                 }
-
-
             }
-
-
         }
-        //set on click listener for the Choose image
+
+        // Set on click listener for Choose image
         binding.cardView.setOnClickListener {
             val intent = Intent()
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
             startActivityForResult(
-                Intent.createChooser(intent, "select Image"),
+                Intent.createChooser(intent, "Select Image"),
                 PICK_IMAGE_REQUEST
             )
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.data != null)
             imageUri = data.data
+
         Glide.with(this)
             .load(imageUri)
             .apply(RequestOptions.circleCropTransform())
