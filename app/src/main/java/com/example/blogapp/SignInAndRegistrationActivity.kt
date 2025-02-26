@@ -31,9 +31,9 @@ class SignInAndRegistrationActivity : AppCompatActivity() {
 
     // Cloudinary Configuration
     private val cloudinaryConfig = mapOf(
-        "cloud_name" to "djsc3vi6q",  // Replace with your Cloudinary cloud name
-        "api_key" to "763563615486535",        // Replace with your Cloudinary API key
-        "api_secret" to "x5ogs5QtikGGgxj9HR6Pb4sWIzs"   // Replace with your Cloudinary API secret
+        "cloud_name" to "djsc3vi6q",
+        "api_key" to "763563615486535",
+        "api_secret" to "x5ogs5QtikGGgxj9HR6Pb4sWIzs"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
